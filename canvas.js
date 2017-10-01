@@ -12,6 +12,7 @@ function resizeToFit() {
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for(var i = 0; i < p_stack.length; i++){
+       // console.log(p_stack[i]);
         ctx.beginPath();
         ctx.strokeStyle = "black";
         ctx.fillStyle = "orange";
@@ -42,9 +43,13 @@ function del(){
 
 canvas.addEventListener("click", function(e) {
     if(enableInsert){
-        pixel.x = e.offsetX;
-        pixel.y = e.offsetY;
-        p_stack.push(pixel);
+        var d = {
+            x: "",
+            y: ""
+        };
+        d.x = e.offsetX;
+        d.y = e.offsetY;
+        p_stack.push(d);
         draw();
     }
     enableInsert = false;
