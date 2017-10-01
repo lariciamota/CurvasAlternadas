@@ -15,7 +15,7 @@ function draw(){
         ctx.beginPath();
         ctx.strokeStyle = "black";
         ctx.fillStyle = "orange";
-        ctx.arc(p_stack[i].x, p_stack[i].y, 3, 0, 2*Math.PI);
+        ctx.arc(p_stack[i].x, p_stack[i].y, p_stack[i].radius, 0, 2*Math.PI);
         ctx.stroke();
         ctx.fill();
     }
@@ -24,11 +24,13 @@ function draw(){
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var p_stack = [];
-var pixel = {
+var point = {
     x: "",
-    y: ""
+    y: "",
+    radius: 3
 };
 var enableInsert = false;
+var move = point;
 
 resizeToFit();
 function insert(){
@@ -40,11 +42,53 @@ function del(){
     draw();
 }
 
+function modify() {
+
+}
+
+function findPoint(click){
+    for(var i = 0; i <p_stack.length; i++){
+        var v = {
+            x: p_stack[i].x - click.x,
+            y: p_stack[i].y - click.y
+        };
+        if(Math.sqrt(v.x * v.x + v.y * v.y) <=3){
+            return p_stack[i];
+        }
+    }
+    return null;
+}
+
+canvas.addEventListener('mousedown', function(e) {
+    move = findPoint({
+        x: e.offsetX,
+        y: e.offsetY
+    });
+});
+
+canvas.addEventListener('mousemove', function(e) {
+    if (move !== null) {
+        move.x = e.offsetX;
+        move.y = e.offsetY;
+        draw();
+    }
+});
+
+canvas.addEventListener('mouseup', function(e) {
+    move = false;
+});
+
+
+
+
+
+
+
 canvas.addEventListener("click", function(e) {
     if(enableInsert){
-        pixel.x = e.offsetX;
-        pixel.y = e.offsetY;
-        p_stack.push(pixel);
+        point.x = e.offsetX;
+        point.y = e.offsetY;
+        p_stack.push(point);
         draw();
     }
     enableInsert = false;
