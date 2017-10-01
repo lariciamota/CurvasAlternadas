@@ -12,7 +12,6 @@ function resizeToFit() {
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for(var i = 0; i < p_stack.length; i++){
-       // console.log(p_stack[i]);
         ctx.beginPath();
         ctx.strokeStyle = "black";
         ctx.fillStyle = "orange";
@@ -25,10 +24,6 @@ function draw(){
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var p_stack = [];
-var pixel = {
-    x: "",
-    y: ""
-};
 var enableInsert = false;
 
 resizeToFit();
