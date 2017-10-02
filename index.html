@@ -8,13 +8,15 @@
 </head>
 <body>
 <div id="container">
-    <canvas id="canvas" width="500" height="500" ></canvas>
+    <canvas id="canvas"></canvas>
 </div>
+
 <div class="btn-group">
-    <button onclick="insert()">Inserir</button>
-    <button onclick="del()">Deletar</button>
-    <button>Modificar</button>
+    <button id = "pontos" onclick="hidePoint()">Pontos de Controle</button>
+    <button id = "poligonal" onclick="hidePolygon()">Poligonal de Controle</button>
+   <!-- <button onclick="">Curva de Bezier</button> -->
 </div>
+
 </body>
 </html>
 <script src="canvas.js"></script>

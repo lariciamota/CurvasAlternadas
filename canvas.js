@@ -11,28 +11,19 @@ function resizeToFit() {
 
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for(var i = 0; i < p_stack.length; i++){
-        ctx.beginPath();
-        ctx.strokeStyle = "black";
-        ctx.fillStyle = "orange";
-        ctx.arc(p_stack[i].x, p_stack[i].y, 5, 0, 2*Math.PI);
-        ctx.stroke();
-        ctx.fill();
-    }
-    for(var j = 0; j < p_stack.length-1; j++){
-        ctx.beginPath();
-        ctx.strokeStyle = "black";
-        ctx.moveTo(p_stack[j].x, p_stack[j].y);
-        ctx.lineTo(p_stack[j+1].x, p_stack[j+1].y);
-        ctx.stroke();
-    }
-
+    drawPoints();
+    drawPolygonal();
 }
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
+var button_Points = document.getElementById('pontos');
+var button_Polygonal = document.getElementById('poligonal');
+
 var p_stack = [];
 var move = null;
+var hidePoints = false;
+var hidePolygonal = false;
 
 resizeToFit();
 
@@ -50,7 +41,6 @@ canvas.addEventListener("click", function(e) {
 
 });
 
-
 function findPoint(click){
     for(var i = 0; i <p_stack.length; i++){
         var v = {
@@ -64,7 +54,7 @@ function findPoint(click){
     return null;
 }
 
-canvas.addEventListener("dblclick", function(e){
+canvas.addEventListener('dblclick', function(e){
     var x = findPoint(e);
     if(x !== null){
         p_stack.splice(p_stack.indexOf(x), 1);
@@ -88,3 +78,60 @@ canvas.addEventListener('mouseup', function() {
     move = null;
 });
 
+function drawPoints() {
+    for(var i = 0; i < p_stack.length; i++){
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.fillStyle = "orange";
+        ctx.arc(p_stack[i].x, p_stack[i].y, 5, 0, 2*Math.PI);
+        ctx.stroke();
+        ctx.fill();
+    }
+}
+
+function drawPolygonal() {
+    for(var j = 0; j < p_stack.length-1; j++){
+        ctx.beginPath();
+        ctx.strokeStyle = "orange";
+        ctx.moveTo(p_stack[j].x, p_stack[j].y);
+        ctx.lineTo(p_stack[j+1].x, p_stack[j+1].y);
+        ctx.stroke();
+    }
+}
+function points() {
+    if(hidePoints){
+        hidePoints = false;
+    } else {
+        hidePoints = true;
+    }
+}
+function polyonal() {
+    if(hidePolygonal){
+        hidePolygonal = false;
+    } else {
+        hidePolygonal = true;
+    }
+}
+button_Points.onclick = function hidePoint() {
+    points();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(hidePoints && !hidePolygonal){
+        drawPolygonal();
+    } else if(!hidePoints && !hidePolygonal){
+        draw();
+    } else if(!hidePoints && hidePolygonal){
+        drawPoints();
+    }
+};
+
+button_Polygonal.onclick = function hidePolygon(){
+    polyonal();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(hidePolygonal && !hidePoints){
+        drawPoints();
+    } else if(!hidePolygonal && !hidePoints){
+        draw();
+    } else if(!hidePolygonal && hidePoints){
+        drawPolygonal();
+    }
+};
