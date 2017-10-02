@@ -13,6 +13,7 @@ function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawPoints();
     drawPolygonal();
+    drawCurve();
 }
 
 var canvas = document.getElementById('canvas');
@@ -21,11 +22,13 @@ var button_Points = document.getElementById('pontos');
 var button_Polygonal = document.getElementById('poligonal');
 var button_Curve = document.getElementById('curva');
 
-var p_stack = [];
+var p_stack = []; //pontos de controle
+var c_stack = []; //pontos da curva de Bezier
 var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
 var hideCurve = false;
+
 
 resizeToFit();
 
@@ -100,6 +103,17 @@ function drawPolygonal() {
         ctx.stroke();
     }
 }
+
+function drawCurve(){
+    for(var z = 0; z < c_stack.length - 1; z++){
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.moveTo(c_stack[j].x, c_stack[j].y);
+        ctx.lineTo(c_stack[j+1].x, c_stack[j+1].y);
+        ctx.stroke();
+    }
+}
+
 function points() {
     if(hidePoints){
         hidePoints = false;
@@ -123,32 +137,35 @@ function curve(){
 }
 button_Points.onclick = function hidePoint() {
     points();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if(hidePoints && !hidePolygonal){
-        drawPolygonal();
-    } else if(!hidePoints && !hidePolygonal){
-        draw();
-    } else if(!hidePoints && hidePolygonal){
-        drawPoints();
-    }
+    conditions();
 };
-
 button_Polygonal.onclick = function hidePolygon(){
     polyonal();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if(hidePolygonal && !hidePoints){
-        drawPoints();
-    } else if(!hidePolygonal && !hidePoints){
-        draw();
-    } else if(!hidePolygonal && hidePoints){
-        drawPolygonal();
-    }
+    conditions();
 };
 button_Curve.onclick = function hideCurv() {
     curve();
+    conditions();
+};
+
+function conditions(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if(){
-
+    if(hidePoints && hidePolygonal && !hideCurve){
+        drawCurve();
+    } else if(hidePoints && !hidePolygonal && hideCurve){
+        drawPolygonal();
+    } else if(!hidePoints && hidePolygonal && hideCurve){
+        drawPoints();
+    } else if(!hidePoints && !hidePolygonal && hideCurve){
+        drawPoints();
+        drawPolygonal();
+    } else if(!hidePoints && hidePolygonal && !hideCurve){
+        drawPoints();
+        drawCurve();
+    } else if(hidePoints && !hidePolygonal && !hideCurve){
+        drawPolygonal();
+        drawCurve();
+    } else if(!hidePoints && !hidePolygonal && !hideCurve){
+        draw();
     }
-
 }
