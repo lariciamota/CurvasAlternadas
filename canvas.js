@@ -19,11 +19,13 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var button_Points = document.getElementById('pontos');
 var button_Polygonal = document.getElementById('poligonal');
+var button_Curve = document.getElementById('curva');
 
 var p_stack = [];
 var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
+var hideCurve = false;
 
 resizeToFit();
 
@@ -112,6 +114,13 @@ function polyonal() {
         hidePolygonal = true;
     }
 }
+function curve(){
+    if(hideCurve){
+        hideCurve = false;
+    } else {
+        hideCurve = true;
+    }
+}
 button_Points.onclick = function hidePoint() {
     points();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -135,3 +144,11 @@ button_Polygonal.onclick = function hidePolygon(){
         drawPolygonal();
     }
 };
+button_Curve.onclick = function hideCurv() {
+    curve();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if(){
+
+    }
+
+}
