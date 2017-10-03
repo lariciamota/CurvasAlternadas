@@ -24,11 +24,12 @@ var button_Curve = document.getElementById('curva');
 
 var p_stack = []; //pontos de controle
 var c_stack = []; //pontos da curva de Bezier
+//var b = [][]; //pontos calculados em de decasteljau
 var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
 var hideCurve = false;
-
+var n_Aval = document.getElementById('avaliacoes');
 
 resizeToFit();
 
@@ -108,32 +109,20 @@ function drawCurve(){
     for(var z = 0; z < c_stack.length - 1; z++){
         ctx.beginPath();
         ctx.strokeStyle = "black";
-        ctx.moveTo(c_stack[j].x, c_stack[j].y);
-        ctx.lineTo(c_stack[j+1].x, c_stack[j+1].y);
+        ctx.moveTo(c_stack[z].x, c_stack[z].y);
+        ctx.lineTo(c_stack[z+1].x, c_stack[z+1].y);
         ctx.stroke();
     }
 }
 
 function points() {
-    if(hidePoints){
-        hidePoints = false;
-    } else {
-        hidePoints = true;
-    }
+    hidePoints = !hidePoints;
 }
 function polyonal() {
-    if(hidePolygonal){
-        hidePolygonal = false;
-    } else {
-        hidePolygonal = true;
-    }
+    hidePolygonal = !hidePolygonal;
 }
 function curve(){
-    if(hideCurve){
-        hideCurve = false;
-    } else {
-        hideCurve = true;
-    }
+    hideCurve = !hideCurve;
 }
 button_Points.onclick = function hidePoint() {
     points();
@@ -168,4 +157,35 @@ function conditions(){
     } else if(!hidePoints && !hidePolygonal && !hideCurve){
         draw();
     }
+}
+
+function bezier(){
+    var b = [p_stack.length][p_stack.length];
+    for(var m = 0; m < p_stack.length; m++) b[0][m] = p_stack[m];
+    return deDecasteljau(b)
+}
+
+function alternada(){
+    var b = [p_stack.length][p_stack.length];
+    for(var m = 0; m < p_stack.length; m = m+2){
+        if(m+1 !== p_stack.length){
+            b[0][m] = p_stack[m+1];
+            b[0][m+1] = p_stack[m];
+        } else {
+            b[0][m] = p_stack[m];
+        }
+    }
+    return deDecasteljau(b);
+}
+
+function  deDecasteljau(b){
+    for(var z = 0, t = 0; z < n_Aval, t <= 1; z++, t = t + (1/(n_Aval-1))){
+        for(var i = 1; i < p_stack.length; i++){
+            for(var j = 0; j < p_stack.length - i; j++){
+                b[i][j] = ((1-t) * b[i-1][j]) + (t * b[i-1][j+1]);
+            }
+            if(i === p_stack.length - 1) c_stack[z] = b[i][j];
+        }
+    }
+    return c_stack;
 }
