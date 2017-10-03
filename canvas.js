@@ -9,13 +9,6 @@ function resizeToFit() {
     resizeCanvas(width, height);
 }
 
-function draw(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawPoints();
-    drawPolygonal();
-    drawCurve();
-}
-
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var button_Points = document.getElementById('pontos');
@@ -24,15 +17,14 @@ var button_Curve = document.getElementById('curva');
 
 var p_stack = []; //pontos de controle
 var c_stack = []; //pontos da curva de Bezier
-//var b = [][]; //pontos calculados em de decasteljau
 var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
 var hideCurve = false;
-var n_Aval = document.getElementById('avaliacoes');
-
+var n_Aval = 0;
 resizeToFit();
 
+//Eventos
 canvas.addEventListener("click", function(e) {
     if(findPoint(e) === null){
         var d = {
@@ -84,6 +76,15 @@ canvas.addEventListener('mouseup', function() {
     move = null;
 });
 
+//Funcoes para desenhar no canvas
+function draw(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPoints();
+    drawPolygonal();
+    drawBezier();
+    drawAlternada();
+}
+
 function drawPoints() {
     for(var i = 0; i < p_stack.length; i++){
         ctx.beginPath();
@@ -96,67 +97,76 @@ function drawPoints() {
 }
 
 function drawPolygonal() {
-    for(var j = 0; j < p_stack.length-1; j++){
+    ctx.strokeStyle = "orange";
+    connectDots(p_stack);
+}
+
+function drawBezier(){
+    var array = bezier();
+    ctx.strokeStyle = "black";
+    connectDots(array);
+}
+
+function drawAlternada() {
+    var array = alternada();
+    ctx.strokeStyle = "indigo";
+    connectDots(array);
+}
+
+function connectDots(array) {
+    for(var z = 0; z < array.length - 1; z++){
         ctx.beginPath();
-        ctx.strokeStyle = "orange";
-        ctx.moveTo(p_stack[j].x, p_stack[j].y);
-        ctx.lineTo(p_stack[j+1].x, p_stack[j+1].y);
+        ctx.moveTo(array[z].x, array[z].y);
+        ctx.lineTo(array[z+1].x, array[z+1].y);
         ctx.stroke();
     }
 }
 
-function drawCurve(){
-    for(var z = 0; z < c_stack.length - 1; z++){
-        ctx.beginPath();
-        ctx.strokeStyle = "black";
-        ctx.moveTo(c_stack[z].x, c_stack[z].y);
-        ctx.lineTo(c_stack[z+1].x, c_stack[z+1].y);
-        ctx.stroke();
-    }
-}
-
-function points() {
-    hidePoints = !hidePoints;
-}
-function polyonal() {
-    hidePolygonal = !hidePolygonal;
-}
-function curve(){
-    hideCurve = !hideCurve;
-}
+//Esconder/exibir
 button_Points.onclick = function hidePoint() {
-    points();
+    hidePoints = !hidePoints;
     conditions();
 };
 button_Polygonal.onclick = function hidePolygon(){
-    polyonal();
+    hidePolygonal = !hidePolygonal;
     conditions();
 };
 button_Curve.onclick = function hideCurv() {
-    curve();
+    hideCurve = !hideCurve;
     conditions();
 };
 
 function conditions(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if(hidePoints && hidePolygonal && !hideCurve){
-        drawCurve();
+        drawBezier();
+        drawAlternada();
     } else if(hidePoints && !hidePolygonal && hideCurve){
         drawPolygonal();
+        drawAlternada()
     } else if(!hidePoints && hidePolygonal && hideCurve){
         drawPoints();
+        drawAlternada()
     } else if(!hidePoints && !hidePolygonal && hideCurve){
         drawPoints();
         drawPolygonal();
+        drawAlternada()
     } else if(!hidePoints && hidePolygonal && !hideCurve){
         drawPoints();
-        drawCurve();
+        drawBezier();
+        drawAlternada()
     } else if(hidePoints && !hidePolygonal && !hideCurve){
         drawPolygonal();
-        drawCurve();
+        drawBezier();
+        drawAlternada()
     } else if(!hidePoints && !hidePolygonal && !hideCurve){
         draw();
     }
+}
+
+//Funcoes para montar as curvas
+function nAval() {
+    n_Aval = document.getElementById("avaliacoes").elements[0].value;
 }
 
 function bezier(){
@@ -166,23 +176,26 @@ function bezier(){
 }
 
 function alternada(){
-    var b = [p_stack.length][p_stack.length];
+    var a = [p_stack.length][p_stack.length];
     for(var m = 0; m < p_stack.length; m = m+2){
         if(m+1 !== p_stack.length){
-            b[0][m] = p_stack[m+1];
-            b[0][m+1] = p_stack[m];
+            a[0][m] = p_stack[m+1];
+            a[0][m+1] = p_stack[m];
         } else {
-            b[0][m] = p_stack[m];
+            a[0][m] = p_stack[m];
         }
     }
-    return deDecasteljau(b);
+    return deDecasteljau(a);
 }
 
 function  deDecasteljau(b){
     for(var z = 0, t = 0; z < n_Aval, t <= 1; z++, t = t + (1/(n_Aval-1))){
         for(var i = 1; i < p_stack.length; i++){
             for(var j = 0; j < p_stack.length - i; j++){
-                b[i][j] = ((1-t) * b[i-1][j]) + (t * b[i-1][j+1]);
+                b[i][j] = {
+                    x: ((1-t) * b[i-1][j].x) + (t * b[i-1][j+1].x),
+                    y: ((1-t) * b[i-1][j].y) + (t * b[i-1][j+1].y)
+                };
             }
             if(i === p_stack.length - 1) c_stack[z] = b[i][j];
         }
