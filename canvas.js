@@ -21,7 +21,7 @@ var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
 var hideCurve = false;
-var n_Aval = 0;
+var n_Aval = 100;
 resizeToFit();
 
 //Eventos
@@ -40,7 +40,7 @@ canvas.addEventListener("click", function(e) {
 });
 
 function findPoint(click){
-    for(var i = 0; i <p_stack.length; i++){
+    for(var i = 0; i < p_stack.length; i++){
         var v = {
             x: p_stack[i].x - click.x,
             y: p_stack[i].y - click.y
@@ -166,17 +166,23 @@ function conditions(){
 
 //Funcoes para montar as curvas
 function nAval() {
-    n_Aval = document.getElementById("avaliacoes").elements[0].value;
+   // n_Aval = document.getElementById("teste")
 }
 
 function bezier(){
-    var b = [p_stack.length][p_stack.length];
-    for(var m = 0; m < p_stack.length; m++) b[0][m] = p_stack[m];
-    return deDecasteljau(b)
+    var b = new Array(new Array());
+    for(var m = 0; m < p_stack.length; m++) {
+        b[0][m] = {
+            x: p_stack[m].x,
+            y: p_stack[m].y
+        };
+    }
+    console.log(b);
+    return deCasteljau(b);
 }
 
 function alternada(){
-    var a = [p_stack.length][p_stack.length];
+    var a = new Array(new Array());
     for(var m = 0; m < p_stack.length; m = m+2){
         if(m+1 !== p_stack.length){
             a[0][m] = p_stack[m+1];
@@ -185,10 +191,10 @@ function alternada(){
             a[0][m] = p_stack[m];
         }
     }
-    return deDecasteljau(a);
+    return deCasteljau(a);
 }
 
-function  deDecasteljau(b){
+function  deCasteljau(b){
     for(var z = 0, t = 0; z < n_Aval, t <= 1; z++, t = t + (1/(n_Aval-1))){
         for(var i = 1; i < p_stack.length; i++){
             for(var j = 0; j < p_stack.length - i; j++){
