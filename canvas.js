@@ -20,7 +20,7 @@ var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
 var hideCurve = false;
-var n_Aval = 100;
+var n_Aval = 1000;
 resizeToFit();
 
 //Eventos
@@ -195,32 +195,24 @@ function alternada(){
 }
 
 function  deCasteljau(b){
-    // console.log(b);
-    var anterior = [];
-    var nova = [];
-    for(var i = 0; i < b.length; i++){
-        anterior[i] = b[i];
-    }
     var c_stack = []; //pontos da curva de Bezier
 
-    for(var z = 0, t = 0; z < n_Aval, t <= 1; z++, t = t + (1/(n_Aval-1))){
-        for(var j = 0; j < b.length-1; j++){
+    for(var t = 0; t <= 1; t += (1/(n_Aval-1))){
+        var anterior = b.slice();
+        var nova = [];
+        for(var j = 0; j < b.length - 1; j++){
             for(var i = 0; i < anterior.length - 1; i++){
-                nova.push({
+                nova[i] = {
                     x: (anterior[i].x * (1 - t)) + (t * anterior[i + 1].x),
                     y: (anterior[i].y * (1 - t)) + (t * anterior[i + 1].y)
-                });
+                };
 
             }
-            for(var m = 0; m < nova.length; m++){
-                anterior[m] = nova[m];
-            }
-           // anterior = nova.slice();
+            anterior = nova.slice();
             nova = [];
         }
-        c_stack[z] = anterior[0];
+        c_stack.push(anterior[0]);
     }
-    console.log(c_stack);
     return c_stack;
 }
 
