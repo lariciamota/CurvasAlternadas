@@ -16,7 +16,6 @@ var button_Polygonal = document.getElementById('poligonal');
 var button_Curve = document.getElementById('curva');
 
 var p_stack = []; //pontos de controle
-var c_stack = []; //pontos da curva de Bezier
 var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
@@ -102,13 +101,15 @@ function drawPolygonal() {
 }
 
 function drawBezier(){
-    var array = bezier();
+    var array = [];
+    array = bezier();
     ctx.strokeStyle = "black";
     connectDots(array);
 }
 
 function drawAlternada() {
-    var array = alternada();
+    var array = [];
+    array = alternada();
     ctx.strokeStyle = "indigo";
     connectDots(array);
 }
@@ -170,19 +171,24 @@ function nAval() {
 }
 
 function bezier(){
-    var b = new Array(new Array());
+    var b = [];
+    for (var i = 0; i < p_stack.length; i++) {
+        b[i] = [];
+    }
     for(var m = 0; m < p_stack.length; m++) {
         b[0][m] = {
             x: p_stack[m].x,
             y: p_stack[m].y
         };
     }
-    console.log(b);
     return deCasteljau(b);
 }
 
 function alternada(){
-    var a = new Array(new Array());
+    var a = [];
+    for (var i = 0; i < p_stack.length; i++) {
+        a[i] = [];
+    }
     for(var m = 0; m < p_stack.length; m = m+2){
         if(m+1 !== p_stack.length){
             a[0][m] = p_stack[m+1];
@@ -195,6 +201,9 @@ function alternada(){
 }
 
 function  deCasteljau(b){
+    console.log(b);
+    var c_stack = []; //pontos da curva de Bezier
+
     for(var z = 0, t = 0; z < n_Aval, t <= 1; z++, t = t + (1/(n_Aval-1))){
         for(var i = 1; i < p_stack.length; i++){
             for(var j = 0; j < p_stack.length - i; j++){
