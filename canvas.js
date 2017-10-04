@@ -167,16 +167,13 @@ function conditions(){
 
 //Funcoes para montar as curvas
 function nAval() {
-   // n_Aval = document.getElementById("teste")
+    // n_Aval = document.getElementById("teste")
 }
 
 function bezier(){
     var b = [];
-    for (var i = 0; i < p_stack.length; i++) {
-        b[i] = [];
-    }
     for(var m = 0; m < p_stack.length; m++) {
-        b[0][m] = {
+        b[m] = {
             x: p_stack[m].x,
             y: p_stack[m].y
         };
@@ -186,34 +183,44 @@ function bezier(){
 
 function alternada(){
     var a = [];
-    for (var i = 0; i < p_stack.length; i++) {
-        a[i] = [];
-    }
     for(var m = 0; m < p_stack.length; m = m+2){
         if(m+1 !== p_stack.length){
-            a[0][m] = p_stack[m+1];
-            a[0][m+1] = p_stack[m];
+            a[m] = p_stack[m+1];
+            a[m+1] = p_stack[m];
         } else {
-            a[0][m] = p_stack[m];
+            a[m] = p_stack[m];
         }
     }
     return deCasteljau(a);
 }
 
 function  deCasteljau(b){
-    console.log(b);
+    // console.log(b);
+    var anterior = [];
+    var nova = [];
+    for(var i = 0; i < b.length; i++){
+        anterior[i] = b[i];
+    }
     var c_stack = []; //pontos da curva de Bezier
 
     for(var z = 0, t = 0; z < n_Aval, t <= 1; z++, t = t + (1/(n_Aval-1))){
-        for(var i = 1; i < p_stack.length; i++){
-            for(var j = 0; j < p_stack.length - i; j++){
-                b[i][j] = {
-                    x: ((1-t) * b[i-1][j].x) + (t * b[i-1][j+1].x),
-                    y: ((1-t) * b[i-1][j].y) + (t * b[i-1][j+1].y)
-                };
+        for(var j = 0; j < b.length-1; j++){
+            for(var i = 0; i < anterior.length - 1; i++){
+                nova.push({
+                    x: (anterior[i].x * (1 - t)) + (t * anterior[i + 1].x),
+                    y: (anterior[i].y * (1 - t)) + (t * anterior[i + 1].y)
+                });
+
             }
-            if(i === p_stack.length - 1) c_stack[z] = b[i][j];
+            for(var m = 0; m < nova.length; m++){
+                anterior[m] = nova[m];
+            }
+           // anterior = nova.slice();
+            nova = [];
         }
+        c_stack[z] = anterior[0];
     }
+    console.log(c_stack);
     return c_stack;
 }
+
