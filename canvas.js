@@ -20,7 +20,7 @@ var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
 var hideCurve = false;
-var n_Aval = 1000;
+var n_Aval = document.getElementById('avaliacao');
 resizeToFit();
 
 //Eventos
@@ -167,7 +167,7 @@ function conditions(){
 
 //Funcoes para montar as curvas
 function nAval() {
-    // n_Aval = document.getElementById("teste")
+    n_Aval = parseInt(n_Aval.value);
 }
 
 function bezier(){
