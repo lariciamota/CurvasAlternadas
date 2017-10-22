@@ -121,6 +121,7 @@ function connectDots(array) {
         ctx.lineTo(array[z+1].x, array[z+1].y);
         ctx.stroke();
     }
+
 }
 
 //Esconder/exibir
@@ -162,7 +163,10 @@ function conditions(){
         drawAlternada()
     } else if(!hidePoints && !hidePolygonal && !hideCurve){
         draw();
+    } else {
+        drawAlternada();
     }
+
 }
 
 //Funcoes para montar as curvas
@@ -197,14 +201,14 @@ function alternada(){
 function  deCasteljau(b){
     var c_stack = []; //pontos da curva de Bezier
 
-    for(var t = 0; t <= 1; t += (1/(n_Aval-1))){
+    for(var t = 0; t <= 1.001; t += (1/(n_Aval-1))){
         var anterior = b.slice();
         var nova = [];
         for(var j = 0; j < b.length - 1; j++){
             for(var i = 0; i < anterior.length - 1; i++){
                 nova[i] = {
-                    x: (anterior[i].x * (1 - t)) + (t * anterior[i + 1].x),
-                    y: (anterior[i].y * (1 - t)) + (t * anterior[i + 1].y)
+                    x: ((anterior[i].x * (1 - t)) + (t * anterior[i + 1].x)),
+                    y: ((anterior[i].y * (1 - t)) + (t * anterior[i + 1].y))
                 };
 
             }
