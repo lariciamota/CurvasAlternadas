@@ -14,13 +14,14 @@ var ctx = canvas.getContext('2d');
 var button_Points = document.getElementById('pontos');
 var button_Polygonal = document.getElementById('poligonal');
 var button_Curve = document.getElementById('curva');
+var n_Aval = document.getElementById('avaliacao');
+var button_Aval = document.getElementById('aval');
 
 var p_stack = []; //pontos de controle
 var move = null;
 var hidePoints = false;
 var hidePolygonal = false;
 var hideCurve = false;
-var n_Aval = document.getElementById('avaliacao');
 resizeToFit();
 
 //Eventos
@@ -170,7 +171,8 @@ function conditions(){
 }
 
 //Funcoes para montar as curvas
-function nAval() {
+button_Aval.onclick = function nAval() {
+    n_Aval = document.getElementById('avaliacao');
     n_Aval = parseInt(n_Aval.value);
 }
 
@@ -182,6 +184,8 @@ function bezier(){
             y: p_stack[m].y
         };
     }
+    //console.log("Bezier");
+    //console.log(b);
     return deCasteljau(b);
 }
 
@@ -195,6 +199,8 @@ function alternada(){
             a[m] = p_stack[m];
         }
     }
+    //console.log("Alternada");
+    //console.log(a);
     return deCasteljau(a);
 }
 
