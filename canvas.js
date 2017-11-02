@@ -34,7 +34,7 @@ canvas.addEventListener("click", function(e) {
         d.x = e.offsetX;
         d.y = e.offsetY;
         p_stack.push(d);
-        draw();
+        conditions();
     }
 
 });
@@ -56,7 +56,7 @@ canvas.addEventListener('dblclick', function(e){
     var x = findPoint(e);
     if(x !== null){
         p_stack.splice(p_stack.indexOf(x), 1);
-        draw();
+        conditions();
     }
 });
 
@@ -68,7 +68,7 @@ canvas.addEventListener('mousemove', function(e) {
     if (move !== null) { //se foi clicado num ponto existente, atualiza nova coord
         move.x = e.offsetX;
         move.y = e.offsetY;
-        draw();
+        conditions();
     }
 });
 
@@ -174,6 +174,7 @@ function conditions(){
 button_Aval.onclick = function nAval() {
     n_Aval = document.getElementById('avaliacao');
     n_Aval = parseInt(n_Aval.value);
+    conditions();    
 }
 
 function bezier(){
